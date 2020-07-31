@@ -1,0 +1,20 @@
+body {
+    background-color: black;
+}
+
+div.widget-list {
+    background-color: #551B71;
+    padding: 5px 10px;
+}
+
+div.widget-list ul {
+    border-bottom: 2px dot-dash black;
+}
+
+div.widget-list ul li {
+    background-color: #303030;
+    padding: 10px 20px;
+    color: #dfdfdf;
+    border-bottom: 1px dotted black;
+    font-size: x-large;
+}

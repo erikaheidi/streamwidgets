@@ -1,0 +1,25 @@
+{
+  "name": "streamwidgets/application",
+  "description": "Minicli Application Template",
+  "license": "MIT",
+  "homepage": "https://github.com/minicli/application",
+  "keywords": ["cli","command-line", "template"],
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/",
+      "StreamWidgets\\": "src/"
+    }
+  },
+  "require": {
+    "minicli/minicli": "^2.0",
+    "ext-json": "*",
+    "ext-imagick": "*",
+    "minicli/curly": "^0.1.2",
+    "twig/twig": "^2.0"
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "@php -r \"file_exists('config.php') || copy('config_example.php', 'config.php');\""
+    ]
+  }
+}
