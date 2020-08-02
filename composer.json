@@ -15,7 +15,8 @@
     "ext-json": "*",
     "ext-imagick": "*",
     "minicli/curly": "^0.1.2",
-    "twig/twig": "^2.0"
+    "twig/twig": "^2.0",
+    "minicli/minicache": "^0.2.0"
   },
   "scripts": {
     "post-install-cmd": [

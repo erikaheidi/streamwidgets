@@ -4,9 +4,13 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use Minicli\App;
 use StreamWidgets\TwigServiceProvider;
+use StreamWidgets\StorageService;
+use StreamWidgets\TwitchServiceProvider;
 
 $app = new App(require __DIR__ . '/../config.php');
 $app->addService('twig', new TwigServiceProvider());
+$app->addService('storage', new StorageService());
+$app->addService('twitch', new TwitchServiceProvider());
 
 $parts = explode('/', $_SERVER['PATH_INFO']);
 $subcommand = "default";

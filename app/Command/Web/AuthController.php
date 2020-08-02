@@ -4,7 +4,7 @@ namespace App\Command\Web;
 
 use StreamWidgets\WebController;
 
-class TwitchController extends WebController
+class AuthController extends WebController
 {
     static $TWITCH_AUTH_URL = 'https://id.twitch.tv/oauth2/authorize';
 
@@ -32,14 +32,12 @@ class TwitchController extends WebController
         $client_id = $this->getApp()->config->twitch_client_id;
         $redirect_uri = $this->getApp()->config->twitch_redirect_url;
         $response_type = 'token';
-        $scope = 'user:edit';
+        $scope = 'user:edit+channel:read:subscriptions';
 
         echo "<br><br><strong>Authorize the app in the following link:</strong><br>";
         $url = $this->getAuthorizeURL($client_id, $redirect_uri, $response_type, $scope);
 
         echo '<a href="' . $url . '">' . $url . '</a>';
-        //$this->redirect($this->getAuthorizeURL($client_id, $redirect_uri, $response_type, $scope));
-
     }
 
     protected function getAuthorizeURL($client_id, $redirect_uri, $response_type, $scope): string

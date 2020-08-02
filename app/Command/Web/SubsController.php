@@ -2,13 +2,14 @@
 
 namespace App\Command\Web;
 
+use Minicli\Curly\Client;
 use Minicli\Minicache\FileCache;
 use StreamWidgets\StorageService;
 use StreamWidgets\TwitchServiceProvider;
 use StreamWidgets\WebController;
 use Twig\Environment;
 
-class FollowersController extends WebController
+class SubsController extends WebController
 {
     public function handle()
     {
@@ -34,27 +35,35 @@ class FollowersController extends WebController
             exit;
         }
 
-        $followers = $cache->get(StorageService::CACHED_FOLLOWERS);
+        $subs = $cache->get(StorageService::CACHED_SUBS);
 
-        if ($followers === null) {
-            $followers = $twitch->getLatestFollowers($user_id);
-            $cache->save(json_encode($followers), StorageService::CACHED_FOLLOWERS);
+        if ($subs === null) {
+            $subs = $twitch->getLatestSubs($user_id);
+            $cache->save(json_encode($subs), StorageService::CACHED_SUBS);
         } else {
-            $followers = json_decode($followers, true);
+            $subs = json_decode($subs, true);
         }
 
-        if ($followers) {
+        if ($subs) {
             $limit = $this->getParam('limit') ?? 2;
 
             /** @var Environment $twig */
             $twig = $this->getApp()->twig;
 
-            echo $twig->render('widgets/followers.html.twig', [
-                'followers' => array_slice($followers['data'], 0, $limit)
+            echo $twig->render('widgets/subs.html.twig', [
+                'subs' => array_slice($subs['data'], 0, $limit)
             ]);
 
         } else {
             echo "An error occurred.";
         }
+    }
+
+    protected function getHeaders($client_id, $access_token)
+    {
+        return [
+            "Client-ID: $client_id",
+            "Authorization: Bearer $access_token"
+        ];
     }
 }
