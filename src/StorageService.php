@@ -14,6 +14,7 @@ class StorageService implements ServiceInterface
     const CACHED_USERID = 'twitch_USERID';
     const CACHED_FOLLOWERS = 'twitch_FOLLOWERS';
     const CACHED_SUBS = 'twitch_SUBS';
+    const CACHED_LEADERBOARD = 'twitch_leaderboard';
 
     public function load(App $app)
     {

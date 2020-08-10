@@ -1,0 +1,12 @@
+{% extends "widgets.html.twig" %}
+
+{% block content %}
+    <div class="widget-list">
+        <ul>
+            <li class="widget-title subs"><i class="fa fa-heart"></i> New Subs</li>
+    {% for sub in subs %}
+        <li>{{ sub }}</li>
+    {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

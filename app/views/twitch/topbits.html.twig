@@ -1,0 +1,12 @@
+{% extends "widgets.html.twig" %}
+
+{% block content %}
+    <div class="widget-list">
+        <ul>
+            <li class="widget-title bits"><i class="fa fa-trophy"></i> Bits Leaderboard</li>
+    {% for user in leaderboard %}
+        <li>{{ user.rank }}. {{ user.user_name }} <strong>{{ user.score }}</strong></li>
+    {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

@@ -69,6 +69,19 @@ class TwitchServiceProvider implements ServiceInterface
         return null;
     }
 
+    public function getBitsLeaderboard($count = 2, $period = 'week')
+    {
+        $url = sprintf("https://api.twitch.tv/helix/bits/leaderboard?count=%s&period=%s", $count, $period);
+
+        $response = $this->client->get($url, $this->getHeaders($this->client_id, $this->access_token));
+
+        if ($response['code'] == 200) {
+            return json_decode($response['body'], true);
+        }
+
+        return null;
+    }
+
     protected function getHeaders($client_id, $access_token)
     {
         return [

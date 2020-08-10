@@ -1,9 +1,9 @@
-{% extends "main.html.twig" %}
+{% extends "widgets.html.twig" %}
 
 {% block content %}
-    <div class="widget-list dark">
-        <h3 class="title has-text-white">New Followers</h3>
+    <div class="widget-list">
         <ul>
+            <li class="widget-title followers"><i class="fa fa-user-circle"></i> New Followers</li>
     {% for follower in followers %}
         <li>{{ follower.from_name }}</li>
     {% endfor %}

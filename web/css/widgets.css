@@ -1,20 +1,68 @@
 body {
-    background-color: black;
+    font-family: "Fira Mono for Powerline";
+    font-size: 14px;
+    color: #dfdfdf;
+}
+
+h1, h2, h3 {
+    font-family: Commando;
 }
 
 div.widget-list {
-    background-color: #551B71;
-    padding: 5px 10px;
+    background-color: rgba(238, 0, 255, 0.4);
 }
 
 div.widget-list ul {
     border-bottom: 2px dot-dash black;
+    margin: 0;
+    padding: 0;
 }
 
 div.widget-list ul li {
-    background-color: #303030;
+    list-style: none;
+    margin: 0;
     padding: 10px 20px;
     color: #dfdfdf;
     border-bottom: 1px dotted black;
     font-size: x-large;
+}
+
+li.widget-title {
+    font-family: Commando;
+    font-size: 16px;
+    background-color: #df4edd;
+}
+
+div.widget-list ul li strong {
+    color: white;
+}
+
+li.followers {
+    background-color: #551B71;
+}
+
+li.subs {
+    background-color: #df4edd;
+}
+
+li.bits {
+    background-color: #df4eaa;
+}
+
+ul.footer-links {
+    margin: 0;
+    padding: 0;
+}
+
+ul.footer-links li {
+    list-style: none;
+    padding: 4px;
+    font-size: x-large;
+}
+
+div.notifications {
+    padding: 10px;
+    height: 120px;
+    background-color: rgba(0, 0, 0, 0.6);
+    font-size: large;
 }

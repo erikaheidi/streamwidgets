@@ -32,7 +32,7 @@ class AuthController extends WebController
         $client_id = $this->getApp()->config->twitch_client_id;
         $redirect_uri = $this->getApp()->config->twitch_redirect_url;
         $response_type = 'token';
-        $scope = 'user:edit+channel:read:subscriptions';
+        $scope = 'user:edit+channel:read:subscriptions+bits:read';
 
         echo "<br><br><strong>Authorize the app in the following link:</strong><br>";
         $url = $this->getAuthorizeURL($client_id, $redirect_uri, $response_type, $scope);

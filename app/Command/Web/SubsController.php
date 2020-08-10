@@ -2,39 +2,15 @@
 
 namespace App\Command\Web;
 
-use Minicli\Curly\Client;
-use Minicli\Minicache\FileCache;
+use StreamWidgets\TwitchWidget;
 use StreamWidgets\StorageService;
 use StreamWidgets\TwitchServiceProvider;
-use StreamWidgets\WebController;
 use Twig\Environment;
 
-class SubsController extends WebController
+class SubsController extends TwitchWidget
 {
-    public function handle()
+    public function show(TwitchServiceProvider $twitch, StorageService $cache, $user_id)
     {
-        try {
-            /** @var TwitchServiceProvider $client */
-            $twitch = $this->getApp()->twitch;
-        } catch (\Exception $e) {
-            echo "Authentication Problem.";
-            exit;
-        }
-
-        /** @var FileCache $cache */
-        $cache = $this->getApp()->storage;
-        $user_id = $cache->get(StorageService::CACHED_USERID);
-
-        if ($user_id === null) {
-            $user_id = $twitch->getCurrentUserId();
-            $cache->save($user_id, StorageService::CACHED_USERID);
-        }
-
-        if (!$user_id) {
-            echo "Credentials Problem.";
-            exit;
-        }
-
         $subs = $cache->get(StorageService::CACHED_SUBS);
 
         if ($subs === null) {
@@ -45,25 +21,25 @@ class SubsController extends WebController
         }
 
         if ($subs) {
-            $limit = $this->getParam('limit') ?? 2;
+            $username = $this->getApp()->config->twitch_user_login;
+            $latest_subs = array_column(array_reverse($subs['data']), 'user_name');
+
+            $has_self = array_search($username, $latest_subs);
+            if ($has_self !== false) {
+                //removes own user from subs list
+                unset($latest_subs[$has_self]);
+            }
 
             /** @var Environment $twig */
             $twig = $this->getApp()->twig;
 
-            echo $twig->render('widgets/subs.html.twig', [
-                'subs' => array_slice($subs['data'], 0, $limit)
+            $limit = $this->getParam('limit') ?? 2;
+            echo $twig->render('twitch/subs.html.twig', [
+                'subs' => array_slice($latest_subs, 0, $limit)
             ]);
 
         } else {
             echo "An error occurred.";
         }
-    }
-
-    protected function getHeaders($client_id, $access_token)
-    {
-        return [
-            "Client-ID: $client_id",
-            "Authorization: Bearer $access_token"
-        ];
     }
 }

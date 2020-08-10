@@ -1,0 +1,42 @@
+{% extends "widgets.html.twig" %}
+{% block refresh %}5{% endblock %}
+{% block header %}
+    {{ parent() }}
+
+    <style>
+
+        @keyframes walking {
+            from { position: relative; left: 300px; opacity: 0 }
+            to {position: relative; left: 0; opacity: 100% }
+        }
+
+        body {
+            max-width: 400px;
+            max-height: 120px;
+            margin: 0;
+            padding: 0;
+        }
+
+        div.walking {
+            width: 100px;
+            height: 120px;
+            overflow: hidden;
+            animation-name: walking;
+            animation-duration: 3s;
+        }
+
+        img {
+            width: 100%;
+            max-width: 100px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    {% if captured %}
+        <p><small>{{ captured.user }} captured an exemplar of <strong>{{ captured.type }}</strong> elephpant.</small></p>
+    <div class="walking">
+        <img src="/images/games/capture/{{ captured.type }}.gif">
+    </div>
+    {% endif %}
+{% endblock %}

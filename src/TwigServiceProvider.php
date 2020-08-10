@@ -16,6 +16,12 @@ class TwigServiceProvider implements ServiceInterface
     {
         $loader = new FilesystemLoader($app->config->twig_templates_path);
         $this->twig = new Environment($loader);
+        $this->twig->getLoader();
+    }
+
+    public function getEnvironment()
+    {
+       return $this->twig;
     }
 
     public function render($template, $data)

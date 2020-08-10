@@ -2,38 +2,15 @@
 
 namespace App\Command\Web;
 
-use Minicli\Minicache\FileCache;
+use StreamWidgets\TwitchWidget;
 use StreamWidgets\StorageService;
 use StreamWidgets\TwitchServiceProvider;
-use StreamWidgets\WebController;
 use Twig\Environment;
 
-class FollowersController extends WebController
+class FollowersController extends TwitchWidget
 {
-    public function handle()
+    public function show(TwitchServiceProvider $twitch, StorageService $cache, $user_id)
     {
-        try {
-            /** @var TwitchServiceProvider $client */
-            $twitch = $this->getApp()->twitch;
-        } catch (\Exception $e) {
-            echo "Authentication Problem.";
-            exit;
-        }
-
-        /** @var FileCache $cache */
-        $cache = $this->getApp()->storage;
-        $user_id = $cache->get(StorageService::CACHED_USERID);
-
-        if ($user_id === null) {
-            $user_id = $twitch->getCurrentUserId();
-            $cache->save($user_id, StorageService::CACHED_USERID);
-        }
-
-        if (!$user_id) {
-            echo "Credentials Problem.";
-            exit;
-        }
-
         $followers = $cache->get(StorageService::CACHED_FOLLOWERS);
 
         if ($followers === null) {
@@ -49,7 +26,7 @@ class FollowersController extends WebController
             /** @var Environment $twig */
             $twig = $this->getApp()->twig;
 
-            echo $twig->render('widgets/followers.html.twig', [
+            echo $twig->render('twitch/followers.html.twig', [
                 'followers' => array_slice($followers['data'], 0, $limit)
             ]);
 

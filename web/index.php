@@ -5,12 +5,22 @@ require __DIR__ . '/../vendor/autoload.php';
 use Minicli\App;
 use StreamWidgets\TwigServiceProvider;
 use StreamWidgets\StorageService;
+use StreamWidgets\LoggerService;
 use StreamWidgets\TwitchServiceProvider;
+use StreamWidgets\GamesServiceProvider;
+
+use App\Games\Capture;
 
 $app = new App(require __DIR__ . '/../config.php');
 $app->addService('twig', new TwigServiceProvider());
 $app->addService('storage', new StorageService());
+$app->addService('logger', new LoggerService());
 $app->addService('twitch', new TwitchServiceProvider());
+
+$games = new GamesServiceProvider();
+$games->registerGame('capture', new Capture());
+
+$app->addService('games', $games);
 
 $parts = explode('/', $_SERVER['PATH_INFO']);
 $subcommand = "default";
