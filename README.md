@@ -30,6 +30,9 @@ Once your access token is set up within your config file, you use the following 
  - `http://localhost:8000/followers` - your latest followers.
  - `http://localhost:8000/subs` - your latest subscribers.
 
+
+![new followers widget screenshot on obs](https://res.cloudinary.com/practicaldev/image/fetch/s--o2i2ujyJ--/c_imagga_scale,f_auto,fl_progressive,h_420,q_auto,w_1000/https://dev-to-uploads.s3.amazonaws.com/i/iqife1e9nu3nhs7n6wdi.jpg)
+
 ### Adjusting Style
 
 The included templates use Bulma CSS and a custom CSS file located at `web/css/widgets.css`.
