@@ -1,6 +1,6 @@
 <?php
 
-namespace StreamWidgets;
+namespace StreamWidgets\Service;
 
 use Minicli\App;
 use Minicli\ServiceInterface;

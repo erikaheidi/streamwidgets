@@ -22,7 +22,7 @@ class StorageService implements ServiceInterface
             throw new \Exception("Missing cache_dir config parameter.");
         }
 
-        $this->resource = new FileCache($app->config->data_dir, $app->config->cache_minutes ?? 1);
+        $this->resource = new FileStorage($app->config->data_dir, $app->config->cache_minutes ?? 1);
     }
 
     public function get($key)

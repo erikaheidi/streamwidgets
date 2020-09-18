@@ -1,13 +1,13 @@
 <?php
 
-namespace StreamWidgets;
+namespace StreamWidgets\Service;
 
 use Minicli\App;
 use Minicli\ServiceInterface;
 use Twig\Loader\FilesystemLoader;
 use Twig\Environment;
 
-class TwigServiceProvider implements ServiceInterface
+class TwigService implements ServiceInterface
 {
     /** @var Environment */
     protected $twig;

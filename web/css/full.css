@@ -1,0 +1,36 @@
+body {
+    min-width: 1920px;
+    min-height: 1080px;
+    overflow: hidden;
+    background: #000000 url("/images/background_galaxy.png");
+}
+
+div.content_area {
+    height: 600px;
+    text-align: center;
+    opacity: 0.4;
+}
+
+div.sidebar {
+    background-color: #551B71;
+    opacity: 0.4;
+}
+
+div.webcam_area {
+    padding: 10px;
+    height: 340px;
+}
+
+div.chat_area {
+    padding: 10px;
+    height: 540px;
+    background-color: black;
+    opacity: 0.4;
+}
+
+div.footer_area {
+    padding: 10px;
+    background-color: #48245a;
+    opacity: 0.8;
+    margin: 0;
+}

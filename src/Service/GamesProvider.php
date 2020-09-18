@@ -1,17 +1,17 @@
 <?php
 
-namespace StreamWidgets;
+namespace StreamWidgets\Service;
 
 use Minicli\App;
 use Minicli\Minicache\FileCache;
 use Minicli\ServiceInterface;
 
-class GamesServiceProvider implements ServiceInterface
+class GamesProvider implements ServiceInterface
 {
     /** @var array  */
     protected $registered_games = [];
 
-    /** @var TwigServiceProvider */
+    /** @var TwigService */
     protected $twig;
 
     /** @var FileCache */
