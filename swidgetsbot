@@ -1,0 +1,32 @@
+#!/usr/bin/php
+<?php
+
+set_time_limit(0);
+
+$hLock=fopen(__FILE__.".lock", "w+");
+if(!flock($hLock, LOCK_EX | LOCK_NB))
+    die("Already running. Exiting...");
+
+if (php_sapi_name() !== 'cli') {
+    exit;
+}
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Minicli\App;
+use StreamWidgets\Chatbot\ChatbotService;
+
+$app = new App(require 'config.php');
+
+$chatbot = new ChatbotService();
+$chatbot->load($app);
+
+$app->addService('chatbot', $chatbot);
+
+$app->setSignature('./swidgetsbot');
+
+$app->runCommand(['swidgetsbot', 'chatbot']);
+
+flock($hLock, LOCK_UN);
+fclose($hLock);
+unlink(__FILE__.".lock");

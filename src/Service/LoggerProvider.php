@@ -5,7 +5,7 @@ namespace StreamWidgets\Service;
 use Minicli\App;
 use Minicli\ServiceInterface;
 
-class LoggerService implements ServiceInterface
+class LoggerProvider implements ServiceInterface
 {
     protected $file;
 

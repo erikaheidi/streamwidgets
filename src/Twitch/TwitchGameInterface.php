@@ -1,12 +1,12 @@
 <?php
 
-namespace StreamWidgets;
+namespace StreamWidgets\Twitch;
 
-use Minicli\Minicache\FileCache;
+use StreamWidgets\Service\GamesProvider;
 
 interface TwitchGameInterface
 {
-    public function bootstrap(GamesServiceProvider $games);
+    public function bootstrap(GamesProvider $games);
 
     public function load(...$params);
 

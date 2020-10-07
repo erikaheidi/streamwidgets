@@ -1,39 +1,37 @@
 # StreamWidgets
 
-This project is highly experimental =) We are building together a little helper tool for streaming with Twitch.
+StreamWidgets é um projeto experimental que reúne diversas ferramentas de interação e outras utilidades para streamers na Twitch.
 
-This is an open source project aimed at giving streamers total control over their overlays and interactive features. Yes, I hate installing extensions!
+Este repositório contém comandos que uso nas minhas lives, e podem servir de exemplo para você implementar seus próprios comandos.
+Uma documentação melhor está a caminho :)
 
+A meta (longo termo) deste projeto é ser uma alternativa open source e self-hosted para o StreamLabs, através da integração de um componente **chatbot** e um componente **web** para criação de overlays.
 
-## Requirements
+- Chatbot: faz a interação no chat através de comandos que podem ser chamados pelos usuários.
+- Web Interface: API (actions) e views para integrar ao stream via Browser Source.
 
-- PHP 7.3+ (CLI-only is OK)
-- A Twitch app that you can create at https://dev.twitch.tv/console/apps, using `http://localhost:8000/auth` as redirect URI.
+StreamWidgets suporta suporta múltiplos usuários em uma mesma instalação usando subdomínios para identificar profiles de usuários diferentes.
+## Requerimentos
+
+- PHP 7.3+, CLI + Web (Ou use o ambiente em Docker Compose incluído)
+- Chaves da aplicação Twitch que pode ser criada aqui: https://dev.twitch.tv/console/apps. Use `http://localhost:8000/auth` como `redirect URI`.
 
  
-## Installation Steps
+## Instalação
 
-1. Clone the project
-2. Run `composer install` to install the dependencies. This will create a new `config.php` using example values.
-3. Edit your `config.php` to include your application's **CLIENT ID** and Twitch username.
-4. Run the built-in PHP server on the root of the project with `php -S 0.0.0.0:8000 -t web/`
-5. Access the Twitch Auth endpoint from your browser: `http://localhost:8000/auth`
-6. Follow the instructions, clicking on the auth link. You will be redirected to authorize the application on Twitch.
-7. After authorizing, you will be redirected back to the /auth endpoint. Look at the browser URL, your access token will be there in the following format:
+1. Clonar o projeto
+2. Executar `composer install` para instalar as (poucas) dependências. Isso irá gerar um `config.php` usando valores de exemplo.
+3. Editar o seu `config.php` com suas credenciais e informações.
+4. Rodar o servidor. Duas opções:
+ - Usar o ambiente Docker Compose incluído: `docker-compose up -d`
+ - Usar o servidor PHP built-in: `php -S 0.0.0.0:8000 -t web/`
+5. Accessar o endpoint de autorização pelo browser: `http://localhost:8000/auth` 
 
-> http://localhost:8000/auth#access_token=TOKEN&scope=user%3Aedit&token_type=bearer
 
-Where TOKEN is your unique access token. Copy that token to your `config.php` and keep it safe.
-
-Once your access token is set up within your config file, you use the following endpoints with your browser source on OBS:
- 
- - `http://localhost:8000/followers` - your latest followers.
- - `http://localhost:8000/subs` - your latest subscribers.
+ - `http://localhost:8000/username/followers` - your latest followers.
+ - `http://localhost:8000/username/subs` - your latest subscribers.
 
 
 ![new followers widget screenshot on obs](https://res.cloudinary.com/practicaldev/image/fetch/s--o2i2ujyJ--/c_imagga_scale,f_auto,fl_progressive,h_420,q_auto,w_1000/https://dev-to-uploads.s3.amazonaws.com/i/iqife1e9nu3nhs7n6wdi.jpg)
 
-### Adjusting Style
-
-The included templates use Bulma CSS and a custom CSS file located at `web/css/widgets.css`.
-You can customize the appearance of the widgets by adjusting the CSS.
+Mais documentação a caminho.

@@ -1,5 +1,5 @@
 {% extends "widgets.html.twig" %}
-{% block refresh %}8{% endblock %}
+{% block refresh %}6{% endblock %}
 {% block header %}
     {{ parent() }}
 
@@ -12,10 +12,10 @@
 
         @keyframes walking-top {
             from { top: 0; opacity: 1 }
-            to { top: {{ random([400, 600, 800]) }}px; opacity: 0 }
+            to { top: {{ random([100, 200, 300]) }}px; opacity: 0 }
         }
         body {
-            background-color: rgba(0, 0, 0, 0);
+            {% if style != 'clean' %}background-color: rgba(0, 0, 0, 0.5);{% endif %}
             width: 1400px;
             margin: 0;
             padding: 30px;
@@ -36,20 +36,20 @@
 
         div.moving-top {
             animation-name: walking-top;
-            animation-duration: 6s;
+            animation-duration: 5s;
             animation-fill-mode: forwards;
         }
 
         div.moving-left {
             animation-name: walking-left;
-            animation-duration: 6s;
+            animation-duration: 5s;
             animation-fill-mode: forwards;
         }
 
         div.moving-right {
             animation-name: walking-left;
             animation-direction: reverse;
-            animation-duration: 6s;
+            animation-duration: 5s;
             animation-fill-mode: forwards;
         }
 
@@ -61,7 +61,7 @@
         div.moving-bottom {
             animation-name: walking-top;
             animation-direction: reverse;
-            animation-duration: 6s;
+            animation-duration: 3s;
             animation-fill-mode: forwards;
         }
 
@@ -73,10 +73,18 @@
 {% endblock %}
 
 {% block content %}
-    {% if captured %}
-        <div class="phant moving-{{ random(['left', 'right', 'top', 'bottom']) }}">
-            <img src="/images/games/capture/{{ captured.type }}.gif">
-            <p>{{ captured.user }}</p>
-        </div>
+
+    {% if style != 'clean' %}
+        <h1>Elephpants Lounge</h1>
+        <p>Welcome! We currently have a party of <strong>{{ captures|length }}</strong> elephpants.</p>
+    {% endif %}
+
+    {% if captures %}
+        {% for user, captured in captures %}
+            <div class="phant moving-{{ random(['left', 'right', 'top', 'bottom']) }}">
+                <img src="/images/games/capture/{{ captured.latest }}.gif">
+                <p>{{ user }}</p>
+            </div>
+        {% endfor %}
     {% endif %}
 {% endblock %}

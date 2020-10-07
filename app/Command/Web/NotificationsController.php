@@ -2,9 +2,8 @@
 
 namespace App\Command\Web;
 
-use StreamWidgets\TwigServiceProvider;
+use StreamWidgets\Service\TwigProvider;
 use StreamWidgets\WebController;
-use Twig\Environment;
 
 class NotificationsController extends WebController
 {
@@ -17,7 +16,7 @@ class NotificationsController extends WebController
             $file = escapeshellarg($file);
             $line = `tail -n 1 $file`;
 
-            /** @var TwigServiceProvider $twig */
+            /** @var TwigProvider $twig */
             $twig = $this->getApp()->twig;
 
             echo $twig->render("overlays/notifications.html.twig", ['message' => $line ]);

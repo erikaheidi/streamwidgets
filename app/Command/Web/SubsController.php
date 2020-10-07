@@ -2,25 +2,36 @@
 
 namespace App\Command\Web;
 
-use StreamWidgets\TwitchWidget;
-use StreamWidgets\StorageService;
-use StreamWidgets\TwitchServiceProvider;
+use StreamWidgets\Exception\TwitchApiException;
+use StreamWidgets\Twitch\TwitchWidget;
+use StreamWidgets\Service\StorageProvider;
+use StreamWidgets\Twitch\TwitchService;
 use Twig\Environment;
 
 class SubsController extends TwitchWidget
 {
-    public function show(TwitchServiceProvider $twitch, StorageService $cache, $user_id)
+    public function show(TwitchService $twitch, StorageProvider $cache, $user_id)
     {
-        $subs = $cache->get(StorageService::CACHED_SUBS);
+        $subs = $cache->get(StorageProvider::CACHED_SUBS . '-' . $user_id);
 
         if ($subs === null) {
-            $subs = $twitch->getLatestSubs($user_id);
-            $cache->save(json_encode($subs), StorageService::CACHED_SUBS);
-        } else {
-            $subs = json_decode($subs, true);
+            try {
+                $subs = $twitch->getLatestSubs($user_id);
+                $cache->save(json_encode($subs), StorageProvider::CACHED_SUBS . '-' . $user_id);
+            } catch (TwitchApiException $e) {
+                // gets cached content if available
+                $subs = $cache->getCached(StorageProvider::CACHED_SUBS . '-' . $user_id);
+
+                if (!$subs) {
+                    echo "Please (re)authorize the application <a href='/auth'>in this link</a>.";
+                    exit;
+                }
+            }
         }
 
         if ($subs) {
+            $subs = json_decode($subs, true);
+
             $username = $this->getApp()->config->twitch_user_login;
             $latest_subs = array_column(array_reverse($subs['data']), 'user_name');
 

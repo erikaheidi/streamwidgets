@@ -2,28 +2,30 @@
 
 namespace App\Games;
 
-use Minicli\Minicache\FileCache;
-use StreamWidgets\GamesServiceProvider;
-use StreamWidgets\TwigServiceProvider;
-use StreamWidgets\TwitchGameInterface;
+use StreamWidgets\FileStorage;
+use StreamWidgets\Service\GamesProvider;
+use StreamWidgets\Service\TwigProvider;
+use StreamWidgets\Twitch\TwitchGameInterface;
 
 class Capture implements TwitchGameInterface
 {
-    /** @var FileCache */
+    /** @var FileStorage */
     protected $storage;
 
     protected $resources_dir;
 
     protected $public_dir;
 
-    /** @var TwigServiceProvider */
+    protected $channel;
+
+    /** @var TwigProvider */
     protected $twig;
 
     const STORAGE_QUEUE = 'GAME_CAPTURE';
     const STORAGE_ALL = 'GAME_CAPTURE_LOG';
     const STORAGE_PARTY = 'GAME_CAPTURE_PARTY';
 
-    public function bootstrap(GamesServiceProvider $games)
+    public function bootstrap(GamesProvider $games)
     {
         $this->resources_dir = $games->games_dir . '/capture';
         $this->public_dir = $games->games_public_dir . '/capture';
@@ -33,19 +35,29 @@ class Capture implements TwitchGameInterface
     {
         $this->twig = $params[0];
         $this->storage = $params[1];
+        $this->channel = $params[2];
     }
 
     public function show(array $params = [])
     {
+        if (isset($params['scene']) && $params['scene'] == 'lounge') {
+
+            $party = json_decode($this->storage->getCachedUnlessExpired(self::STORAGE_PARTY . '-' . $this->channel), true);
+
+            return $this->twig->render("games/capture_lounge.html.twig", array_merge($params, [
+                'captures' => $party
+            ]));
+        }
+
         $captured = null;
-        $queue = $this->storage->getCachedUnlessExpired(self::STORAGE_QUEUE);
+        $queue = $this->storage->getCachedUnlessExpired(self::STORAGE_QUEUE . '-' . $this->channel);
 
         if ($queue) {
             $captures = array_reverse(json_decode($queue, true));
             $captured = array_pop($captures);
 
             //save queue back minus popped capture
-            $this->save(json_encode($captures), self::STORAGE_QUEUE);
+            $this->save(json_encode($captures), self::STORAGE_QUEUE . '-' . $this->channel);
         }
 
         return $this->twig->render("games/capture.html.twig", array_merge($params, [
@@ -69,18 +81,13 @@ class Capture implements TwitchGameInterface
             'capture_time' => date('Y-m-d H:i:s')
         ];
 
-        if ($phant == null) {
-            $this->clearOverlay();
-            return;
-        }
-
-        $accumulated = json_decode($this->storage->getCachedUnlessExpired(self::STORAGE_ALL), true);
+        $accumulated = json_decode($this->storage->getCachedUnlessExpired(self::STORAGE_ALL . '-' . $this->channel), true);
         $accumulated[] = $phant_data;
 
-        $queue = json_decode($this->storage->getCachedUnlessExpired(self::STORAGE_QUEUE), true);
+        $queue = json_decode($this->storage->getCachedUnlessExpired(self::STORAGE_QUEUE . '-' . $this->channel), true);
         $queue[] = $phant_data;
 
-        $party = json_decode($this->storage->getCachedUnlessExpired(self::STORAGE_PARTY), true);
+        $party = json_decode($this->storage->getCachedUnlessExpired(self::STORAGE_PARTY . '-' . $this->channel), true);
         $total = $party[$user]['total_captures'] ?? 0;
 
         $party[$user] = [
@@ -88,18 +95,8 @@ class Capture implements TwitchGameInterface
             'total_captures' => $total + 1
         ];
 
-        $this->save(json_encode($queue), self::STORAGE_QUEUE);
-        $this->save(json_encode($accumulated), self::STORAGE_ALL);
-        $this->save(json_encode($party), self::STORAGE_PARTY);
-    }
-
-    protected function clearOverlay()
-    {
-        $overlay_image = $this->public_dir . '/latest.gif';
-
-        $im = new \Imagick();
-        $im->newImage(1, 1, 'transparent', 'gif');
-
-        $im->writeImage($overlay_image);
+        $this->save(json_encode($queue), self::STORAGE_QUEUE . '-' . $this->channel);
+        $this->save(json_encode($accumulated), self::STORAGE_ALL . '-' . $this->channel);
+        $this->save(json_encode($party), self::STORAGE_PARTY . '-' . $this->channel);
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Command\Web;
 
+use App\User;
+use Minicli\Curly\Client;
 use StreamWidgets\WebController;
 
 class AuthController extends WebController
@@ -20,24 +22,57 @@ class AuthController extends WebController
             exit;
         }
 
-        /**
-         * Twitch redirects you back to a url such as this: http://localhost:8000/twitch#access_token=TOKEN&scope=user%3Aedit&token_type=bearer
-         * We can't obtain the # part of the URL from the back-end, so you'll have to check the url to get your token.
-        **/
-
-        echo "To obtain your access token, click the link below and authorize the application. You will be redirected back to this page.<br><br>";
-        echo "When you're back to this page, check the browser URL and you will find your access token like this:</br>http://localhost:8000/twitch#access_token=<strong>YOUR_UNIQUE_ACCESS_TOKEN</strong>&scope=user...<br><br>";
-        echo "Copy your access code to your config.php and keep it safe.";
-
         $client_id = $this->getApp()->config->twitch_client_id;
+        $client_secret = $this->getApp()->config->twitch_client_secret;
         $redirect_uri = $this->getApp()->config->twitch_redirect_url;
-        $response_type = 'token';
-        $scope = 'user:edit+channel:read:subscriptions+bits:read';
 
-        echo "<br><br><strong>Authorize the app in the following link:</strong><br>";
-        $url = $this->getAuthorizeURL($client_id, $redirect_uri, $response_type, $scope);
+        $state = $this->getParam('state');
 
-        echo '<a href="' . $url . '">' . $url . '</a>';
+        if ($state === null) {
+            $state = md5(time());
+            $auth_url = sprintf(
+                '%s?response_type=code&client_id=%s&redirect_uri=%s&state=%s&scope=%s',
+                self::$TWITCH_AUTH_URL,
+                $client_id,
+                $redirect_uri,
+                $state,
+                "user:edit+channel:read:subscriptions+bits:read"
+            );
+
+            return $this->redirect($auth_url);
+        }
+
+        $code = $this->getParam('code');
+        $token_url = 'https://id.twitch.tv/oauth2/token';
+        $curly = new Client();
+
+        //echo "CODE: $code<BR>";
+        $response = $curly->post(sprintf(
+            '%s?code=%s&client_id=%s&client_secret=%s&grant_type=authorization_code&redirect_uri=%s',
+            $token_url,
+            $code,
+            $client_id,
+            $client_secret,
+            $redirect_uri
+        ), [], ['Accept:', 'application/json']);
+
+        if ($response['code'] == 200) {
+            $token_response = json_decode($response['body'], 1);
+
+            $access_token = $token_response['access_token'];
+
+            $user_info = $this->getCurrentUser($curly, $client_id, $access_token);
+
+            if ($user_info) {
+                User::save($access_token, $user_info);
+                return $this->redirect($this->getApp()->config->app_url . '/' . $user_info['twitch_user_login']);
+            } else {
+                echo "Error while trying to fetch user info.";
+            }
+        }
+
+        echo "An error occurred.";
+        print_r($response);
     }
 
     protected function getAuthorizeURL($client_id, $redirect_uri, $response_type, $scope): string
@@ -46,5 +81,27 @@ class AuthController extends WebController
             "%s?client_id=%s&redirect_uri=%s&response_type=%s&scope=%s",
             self::$TWITCH_AUTH_URL, $client_id, $redirect_uri, $response_type, $scope
         );
+    }
+
+    protected function getCurrentUser(Client $client, $client_id, $access_token)
+    {
+        $response = $client->get(
+            'https://id.twitch.tv/oauth2/validate',
+            $this->getHeaders($client_id, $access_token)
+        );
+
+        if ($response['code'] == 200) {
+            return json_decode($response['body'], 1);
+        }
+
+        return null;
+    }
+
+    protected function getHeaders($client_id, $access_token)
+    {
+        return [
+            "Client-ID: $client_id",
+            "Authorization: Bearer $access_token"
+        ];
     }
 }

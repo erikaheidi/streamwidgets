@@ -2,8 +2,8 @@
 
 namespace App\Command\Web;
 
-use StreamWidgets\GamesServiceProvider;
-use StreamWidgets\TwitchGameInterface;
+use StreamWidgets\Service\GamesProvider;
+use StreamWidgets\Twitch\TwitchGameInterface;
 use StreamWidgets\WebController;
 
 class GameviewsController extends WebController
@@ -16,13 +16,13 @@ class GameviewsController extends WebController
             $game = "capture";
         }
 
-        /** @var GamesServiceProvider $games */
+        /** @var GamesProvider $games */
         $games = $this->getApp()->games;
         $storage = $games->storage;
 
         /** @var TwitchGameInterface $newgame */
         $newgame = $games->getGame($game);
-        $newgame->load($this->getApp()->twig, $storage);
+        $newgame->load($this->getApp()->twig, $storage, $this->getApp()->config->twitch_user_login);
         echo $newgame->show($this->getParams());
     }
 }

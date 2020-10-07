@@ -4,7 +4,8 @@
     {% block header %}
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Swidgets, by @erikaheidi</title>
+        <title>Swidgets by @erikaheidi</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="/css/widgets.css">
         <meta http-equiv="refresh" content="{% block refresh %}30{% endblock %}"/>
@@ -12,9 +13,11 @@
 </head>
 <body>
 
-        {% block content %}
+<div class="content">
+{% block content %}
 
-        {% endblock %}
+{% endblock %}
+</div>
 
 </body>
 </html>

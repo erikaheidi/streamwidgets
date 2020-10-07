@@ -7,7 +7,7 @@ use Minicli\ServiceInterface;
 use Twig\Loader\FilesystemLoader;
 use Twig\Environment;
 
-class TwigService implements ServiceInterface
+class TwigProvider implements ServiceInterface
 {
     /** @var Environment */
     protected $twig;

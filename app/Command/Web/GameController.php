@@ -2,9 +2,8 @@
 
 namespace App\Command\Web;
 
-use Minicli\Minicache\FileCache;
-use StreamWidgets\GamesServiceProvider;
-use StreamWidgets\TwitchGameInterface;
+use StreamWidgets\Service\GamesProvider;
+use StreamWidgets\Twitch\TwitchGameInterface;
 use StreamWidgets\WebController;
 
 class GameController extends WebController
@@ -17,13 +16,13 @@ class GameController extends WebController
             $game_name = "capture";
         }
 
-        /** @var GamesServiceProvider $games */
+        /** @var GamesProvider $games */
         $games = $this->getApp()->games;
         $game = $games->getGame($game_name);
         $storage = $games->storage;
 
         if ($game instanceof TwitchGameInterface) {
-            $game->load($this->getApp()->twig, $storage);
+            $game->load($this->getApp()->twig, $storage, $this->getApp()->config->twitch_user_login);
             $game->run($this->getParams());
         }
     }

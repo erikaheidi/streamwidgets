@@ -1,0 +1,33 @@
+version: "3.7"
+services:
+  app:
+    build:
+      args:
+        user: erika
+        uid: 1000
+      context: ./
+      dockerfile: Dockerfile
+    image: streamwidgets
+    container_name: streamwidgets-app
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./:/var/www
+    networks:
+      - streamwidgets
+
+  nginx:
+    image: nginx:alpine
+    container_name: streamwidgets-nginx
+    restart: unless-stopped
+    ports:
+      - 8080:80
+    volumes:
+      - ./:/var/www
+      - ./docker-compose/nginx:/etc/nginx/conf.d/
+    networks:
+      - streamwidgets
+
+networks:
+  streamwidgets:
+    driver: bridge

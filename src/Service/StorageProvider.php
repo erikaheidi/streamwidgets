@@ -1,14 +1,14 @@
 <?php
 
-namespace StreamWidgets;
+namespace StreamWidgets\Service;
 
 use Minicli\App;
-use Minicli\Minicache\FileCache;
+use StreamWidgets\FileStorage;
 use Minicli\ServiceInterface;
 
-class StorageService implements ServiceInterface
+class StorageProvider implements ServiceInterface
 {
-    /** @var FileCache */
+    /** @var FileStorage */
     protected $resource;
 
     const CACHED_USERID = 'twitch_USERID';
@@ -28,6 +28,11 @@ class StorageService implements ServiceInterface
     public function get($key)
     {
         return $this->resource->getCachedUnlessExpired($key);
+    }
+
+    public function getCached($key)
+    {
+        return $this->resource->getCached($key);
     }
 
     public function save($content, $key)

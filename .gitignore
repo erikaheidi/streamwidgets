@@ -1,5 +1,8 @@
 .idea
+ansible/
+app-deploy.yml
 vendor/
 composer.lock
 config.php
 config-do.php
+swidgetsbot.lock

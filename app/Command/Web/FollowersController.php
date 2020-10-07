@@ -2,25 +2,36 @@
 
 namespace App\Command\Web;
 
-use StreamWidgets\TwitchWidget;
-use StreamWidgets\StorageService;
-use StreamWidgets\TwitchServiceProvider;
+use StreamWidgets\Exception\TwitchApiException;
+use StreamWidgets\Twitch\TwitchWidget;
+use StreamWidgets\Service\StorageProvider;
+use StreamWidgets\Twitch\TwitchService;
 use Twig\Environment;
 
 class FollowersController extends TwitchWidget
 {
-    public function show(TwitchServiceProvider $twitch, StorageService $cache, $user_id)
+    public function show(TwitchService $twitch, StorageProvider $cache, $user_id)
     {
-        $followers = $cache->get(StorageService::CACHED_FOLLOWERS);
-
+        $followers = $cache->get(StorageProvider::CACHED_FOLLOWERS . '-' . $user_id);
+        
         if ($followers === null) {
-            $followers = $twitch->getLatestFollowers($user_id);
-            $cache->save(json_encode($followers), StorageService::CACHED_FOLLOWERS);
-        } else {
-            $followers = json_decode($followers, true);
+            try {
+                $followers = $twitch->getLatestFollowers($user_id);
+                $cache->save(json_encode($followers), StorageProvider::CACHED_FOLLOWERS . '-' . $user_id);
+            } catch (TwitchApiException $e) {
+                // gets cached content if available
+                $followers = $cache->getCached(StorageProvider::CACHED_FOLLOWERS . '-' . $user_id);
+
+                if (!$followers) {
+                    echo "Please (re)authorize the application <a href='/auth'>in this link</a>.";
+                    exit;
+                }
+            }
         }
 
         if ($followers) {
+            $followers = json_decode($followers, true);
+
             $limit = $this->getParam('limit') ?? 2;
 
             /** @var Environment $twig */
